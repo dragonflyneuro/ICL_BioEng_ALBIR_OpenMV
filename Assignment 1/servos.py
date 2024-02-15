@@ -22,7 +22,7 @@ class Servo:
         self.right_id = 4
 
         # Set up servo angle limits
-        self.degrees = 120
+        self.degrees = 90
         self.min_deg = -self.degrees/2
         self.max_deg = self.degrees/2
 
@@ -81,12 +81,12 @@ class Servo:
             float: Corrected angle (deg) of the camera pan servo.
         """
         # Correct for off centre angle
+        self.pan_pos = angle
+
         angle = self.pan_angle_corr + angle
 
         # Constraint angle to limits
         angle = max(min(angle, self.max_deg), self.min_deg)
-
-        self.pan_pos = angle
 
         # Compute duty for pca PWM signal
         duty = self.mid_duty + ( self.span * (angle / self.degrees) )
@@ -94,7 +94,7 @@ class Servo:
         # Set duty and send PVM signal
         self.pca9685.duty(self.pan_id, int(duty) )
 
-        return angle - self.pan_angle_corr
+        return self.pan_pos
 
 
     def set_speed(self, l_speed: float, r_speed: float) -> None:
