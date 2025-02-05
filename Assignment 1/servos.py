@@ -15,7 +15,7 @@ class Servo:
         self.pan_angle_corr = 0
         self.left_zero = 0.05
         self.right_zero = -0.1
-        
+
         # Define servo pin IDs for the servo shield.
         self.pan_id = 7
         self.left_id = 5
@@ -198,20 +198,12 @@ if __name__ == "__main__":
     servo.set_speed(-0.1, -0.1)
     time.sleep_ms(1000)
 
-    print('\n0.5,0.5')
-    servo.set_speed(0.5,0.5)
+    print('\n0.2,0.2')
+    servo.set_speed(0.2,0.2)
     time.sleep_ms(1000)
 
-    print('\n-0.5 -0.5')
-    servo.set_speed(-0.5, -0.5)
-    time.sleep_ms(1000)
-
-    print('\n1, 1')
-    servo.set_speed(1, 1)
-    time.sleep_ms(1000)
-
-    print('\n-1, -1')
-    servo.set_speed(-1, -1)
+    print('\n-0.2, -0.2')
+    servo.set_speed(-0.2, -0.2)
     time.sleep_ms(1000)
 
     print('\n-30deg')

@@ -35,7 +35,7 @@ class Cam(object):
         self.thresholds = thresholds
 
 
-    def get_blobs(self) -> tuple:
+    def get_blobs(self, angle = 0) -> tuple:
         """
         Capture an image and detect color blobs based on predefined thresholds.
 
@@ -44,13 +44,13 @@ class Cam(object):
             img (image): Captured image used to find blobs.
         """
         img = sensor.snapshot()
-
+        img.rotation_corr(z_rotation=angle)
         blobs = img.find_blobs(self.thresholds,pixels_threshold=60,area_threshold=60)
 
         return blobs, img
 
 
-    def get_blobs_bottom(self) -> tuple:
+    def get_blobs_bottom(self, angle = 0) -> tuple:
         """
         Capture an image and detect colour blobs based on predefined thresholds.
         Region of interest is set to the bottom 2/3 of the image.
@@ -60,6 +60,7 @@ class Cam(object):
             img (image): Captured image used to find blobs.
         """
         img = sensor.snapshot()
+        img.rotation_corr(z_rotation=angle)
 
         blobs = img.find_blobs(self.thresholds,pixels_threshold=150,area_threshold=150,
                                roi=(1,int(sensor.height()/3),
@@ -133,7 +134,6 @@ if __name__ == "__main__":
     # Blob threshold tester
     #
     # Use this code to determine colour tracking thresholds
-    # Edited by Daniel Ko 2024
 
     import sensor
     import math
@@ -151,8 +151,10 @@ if __name__ == "__main__":
     # Color Tracking Thresholds (L Min, L Max, A Min, A Max, B Min, B Max)
     # The below thresholds track in general red/green things. You may wish to tune them...
     thresholds = [
-        (15, 30, 10, 32, 20, 40), # Orange
+        (43, 56, 37, 54, 6, 24), # Orange
     ]
+
+    angle = 0 # Set pan angle for rotation correction
 
 
     # Only blobs that with more pixels than "pixel_threshold" and more area than "area_threshold" are
@@ -160,8 +162,9 @@ if __name__ == "__main__":
     # blobs (x, y, width, height). Currently set to look for blobs in the bottom 2/3 of the image.
     while True:
         img = sensor.snapshot()
-        for blob in img.find_blobs(thresholds, pixels_threshold=150, area_threshold=150,
-                                   roi=(1,int(sensor.height()/3),int(sensor.width()),int(2*sensor.height()/3))):
+        img.rotation_corr(z_rotation=angle)
+
+        for blob in img.find_blobs(thresholds, pixels_threshold=150, area_threshold=150):
             img.draw_rectangle(blob.rect())
 
     # Try uncommenting these lines to see what happens
