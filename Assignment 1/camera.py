@@ -22,12 +22,12 @@ class Cam(object):
         sensor.set_auto_gain(False, gain_db = gain)
         sensor.set_auto_whitebal(False)
 
-        # Initialise sensor properties
+        # Initialise sensor properties 
         self.w_centre = sensor.width()/2
         self.h_centre = sensor.height()/2
-        self.h_fov = 70.8
-        self.v_fov = 55.6
-        self.camera_elevation_angle = -11
+        self.h_fov = 31.5
+        self.v_fov = 21
+        self.camera_elevation_angle = -11.5  # can measure and adjust this value 
         self.clock = time.clock()
 
         # Define color tracking thresholds for Red, Green, Blue, and Yellow colors
@@ -145,8 +145,9 @@ if __name__ == "__main__":
     sensor.set_auto_whitebal(False)  # must be turned off for colour tracking
 
     # Change gain here to work with the lighting conditions you have
-    sensor.set_auto_gain(False, gain_db = 20)  # must be turned off for color tracking
-    #
+    sensor.set_auto_gain(False, gain_db = 20)  # can change the gain depending to the brightnes;
+    # make sure you pass the gain you tested it when initialising the Cam object in your script
+    
 
     # Color Tracking Thresholds (L Min, L Max, A Min, A Max, B Min, B Max)
     # The below thresholds track in general red/green things. You may wish to tune them...
