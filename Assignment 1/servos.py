@@ -16,13 +16,13 @@ class Servo:
         self.left_zero = 0.05
         self.right_zero = -0.1
 
-        # Define servo pin IDs for the servo shield.
+        # Define servo pin IDs for the servo shield. EDIT these values as required (servo pins 0-7 from left to right).
         self.pan_id = 7
         self.left_id = 5
         self.right_id = 4
 
         # Set up servo angle limits
-        self.degrees = 90
+        self.degrees = 180   
         self.min_deg = -self.degrees/2
         self.max_deg = self.degrees/2
 
