@@ -38,7 +38,8 @@ class Cam(object):
     def get_blobs(self, angle = 0) -> tuple:
         """
         Capture an image and detect color blobs based on predefined thresholds.
-
+        Args:
+            angle (float): pan angle for image rotation correction. Defaults to 0.
         Returns:
             blobs (list): List of detected blobs.
             img (image): Captured image used to find blobs.
@@ -54,7 +55,8 @@ class Cam(object):
         """
         Capture an image and detect colour blobs based on predefined thresholds.
         Region of interest is set to the bottom 2/3 of the image.
-
+        Args:
+            angle (float): pan angle for image rotation correction. Defaults to 0. 
         Returns:
             blobs (list): List of detected blobs.
             img (image): Captured image used to find blobs.
