@@ -110,7 +110,7 @@ class PanTuning(object):
             blobs, img = self.cam.get_blobs()
             big_blob = self.cam.get_biggest_blob(blobs)
             # Check biggest blob is not None and is blue for calibration
-            if big_blob and self.cam.find_blob([big_blob], 1) is not None:
+            if big_blob and self.cam.find_blob([big_blob], 0) is not None:
                 # track the calibration target
                 error, pan_angle = self.update_pan(big_blob)
 
