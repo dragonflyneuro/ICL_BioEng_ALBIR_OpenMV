@@ -7,7 +7,7 @@ class PanTuning(object):
     """
     A class for managing PID tuning, servo calibration, and camera adjustments.
     """
-    def __init__(self, thresholds, gain = 25, p=0.22, i=0.0, d=0.0, imax=0.0):
+    def __init__(self, thresholds, gain = 8, p=0.22, i=0.0, d=0.0, imax=0.0):
         """
         Initialise the Tuning object with given PID parameters.
 
@@ -47,6 +47,7 @@ class PanTuning(object):
         # Set up flag for searching for target
         flag = True
 
+        print("Calibrating")
         # Check if calibration has been done
         self.calibrate()
         while ((self.min_angle > self.targetmin_angle) or
@@ -57,33 +58,38 @@ class PanTuning(object):
             self.calibrate()
 
         print('Calibration complete')
+
+
         # reset pan to max angle
+        print(self.max_angle)
         self.servo.set_angle(self.max_angle)
 
         while flag is True:
             # Get list of blobs and biggest blob
-            blobs, img = self.cam.get_blobs()
+            blobs, img = self.cam.get_blobs(0, 0)
             big_blob = self.cam.get_biggest_blob(blobs)
 
             # Check biggest blob is not None and is red for target then pass
-            if big_blob and self.cam.find_blob([big_blob], 0) is not None:
+            if big_blob is not None:
                 flag = False
 
         # Setup times for freq test
         t_start = time.ticks_ms()
         t_end =  time.ticks_add(t_start, int(t_run))
 
+        print("Run time, Error, Target angle")
         while time.ticks_diff(t_end, time.ticks_ms()) > 0:
             # Get new image and blocks
             # Get list of blobs and biggest blob
-            blobs, img = self.cam.get_blobs()
+            blobs, img = self.cam.get_blobs(0, 0)
             big_blob = self.cam.get_biggest_blob(blobs)
 
-            if big_blob and self.cam.find_blob([big_blob], 0) is not None:
+            if big_blob is not None:
                 error, target_angle = self.update_pan(big_blob)
 
                 # Write data to csv
                 run_time = time.ticks_diff(time.ticks_ms(), t_start)
+                print(str(run_time)+", "+str(error)+", "+str(target_angle))
                 self.write_csv([run_time, error, target_angle])
 
         # Close and exit
@@ -107,10 +113,11 @@ class PanTuning(object):
         while time.ticks_diff(t_lost, time.ticks_ms()) > 0:
 
             # Get list of blobs and biggest blob
-            blobs, img = self.cam.get_blobs()
+            blobs, img = self.cam.get_blobs(0, 1)
+
             big_blob = self.cam.get_biggest_blob(blobs)
-            # Check biggest blob is not None and is blue for calibration
-            if big_blob and self.cam.find_blob([big_blob], 0) is not None:
+
+            if big_blob is not None:
                 # track the calibration target
                 error, pan_angle = self.update_pan(big_blob)
 
@@ -118,10 +125,10 @@ class PanTuning(object):
                 if error < 10:
                     if pan_angle < self.min_angle:
                         self.min_angle = pan_angle
-                        print('New min angle: ', self.min_angle)
+                        #print('New min angle: ', self.min_angle)
                     if pan_angle > self.max_angle:
                         self.max_angle = pan_angle
-                        print('New max angle: ', self.max_angle)
+                        #print('New max angle: ', self.max_angle)
 
                 # As block was found reset lost timer
                 t_lost = time.ticks_add(time.ticks_ms(), 1500)
@@ -191,6 +198,7 @@ class PanTuning(object):
         self.csv = open(filename, 'w')
         self.csv.flush()
         self.csv.write('Time,Error,Angle\n')  # Writing headers
+
 
 
     def write_csv(self, data: tuple) -> None:
