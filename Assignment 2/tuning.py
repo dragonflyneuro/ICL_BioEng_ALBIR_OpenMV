@@ -66,11 +66,11 @@ class PanTuning(object):
 
         while flag is True:
             # Get list of blobs and biggest blob
-            blobs, img = self.cam.get_blobs(0, 0)
+            blobs, img = self.cam.get_blobs(self.servo.pan_pos)
             big_blob = self.cam.get_biggest_blob(blobs)
 
             # Check biggest blob is not None and is red for target then pass
-            if big_blob is not None:
+            if big_blob and self.cam.find_blob([big_blob], 0) is not None:
                 flag = False
 
         # Setup times for freq test
@@ -81,10 +81,10 @@ class PanTuning(object):
         while time.ticks_diff(t_end, time.ticks_ms()) > 0:
             # Get new image and blocks
             # Get list of blobs and biggest blob
-            blobs, img = self.cam.get_blobs(0, 0)
+            blobs, img = self.cam.get_blobs(self.servo.pan_pos)
             big_blob = self.cam.get_biggest_blob(blobs)
 
-            if big_blob is not None:
+            if big_blob and self.cam.find_blob([big_blob], 0) is not None:
                 error, target_angle = self.update_pan(big_blob)
 
                 # Write data to csv
@@ -113,11 +113,11 @@ class PanTuning(object):
         while time.ticks_diff(t_lost, time.ticks_ms()) > 0:
 
             # Get list of blobs and biggest blob
-            blobs, img = self.cam.get_blobs(0, 1)
+            blobs, img = self.cam.get_blobs(self.servo.pan_pos)
 
             big_blob = self.cam.get_biggest_blob(blobs)
 
-            if big_blob is not None:
+            if big_blob and self.cam.find_blob([big_blob], 1) is not None:
                 # track the calibration target
                 error, pan_angle = self.update_pan(big_blob)
 
@@ -152,6 +152,7 @@ class PanTuning(object):
         angle_error = -(pixel_error/sensor.width()*self.cam.h_fov)
 
         pid_error = self.PID.get_pid(angle_error,1)
+
 
         # Error between camera angle and target in ([deg])
         pan_angle = self.servo.pan_pos + pid_error
