@@ -16,6 +16,7 @@ class Cam(object):
         sensor.reset()
         sensor.set_pixformat(sensor.RGB565)
         sensor.set_framesize(sensor.VGA)   # Set frame size to 640x480
+        # could use QVGA for higher frame rate, but lower resolution
         sensor.skip_frames(time=2000)   # Allow the camera to adjust to light levels
 
         # Both must be turned off for color tracking
