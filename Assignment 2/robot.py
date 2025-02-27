@@ -166,7 +166,7 @@ class Robot(object):
             self.servo.set_angle(new_pan_angle)
 
             # Check blobs to see if the line is found
-            blobs, _ = self.cam.get_blobs_bottom()
+            blobs, _ = self.cam.get_blobs(self.servo.pan_pos)
             found_idx = self.cam.find_blob(blobs, threshold_idx)
             if found_idx:
                 break
